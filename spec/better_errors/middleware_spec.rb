@@ -25,13 +25,17 @@ module BetterErrors
     end
 
     it "shows the error page on any subfolder path" do
-      app.should_receive :show_error_page
       app.call("PATH_INFO" => "/any_sub/folder/path/__better_errors/")
     end
 
     it "doesn't show the error page to a non-local address" do
-      app.should_not_receive :better_errors_call
       app.call("REMOTE_ADDR" => "1.2.3.4")
+    end
+
+    it "should not consider an empty REMOTE_ADDR as IP" do
+      expect {
+        app.call("REMOTE_ADDR" => "")
+      }.to_not raise_error
     end
 
     it "shows to a whitelisted IP" do
